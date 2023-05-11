@@ -4,35 +4,35 @@ from rest_framework.validators import UniqueTogetherValidator
 import datetime as dt
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = '__all__'
-        read_only_fields = ('review', 'pub_date')
-
-
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        #fields = '__all__'
+        exclude = ('id',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    #genre = GenreSerializer(read_only=False, many=True)
-    #category = CategorySerializer(required=True)
+    genre = serializers.SlugRelatedField(
+        many=True,
+        required=True,
+        read_only=False,
+        slug_field='name',
+        queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        required=True,
+        read_only=False,
+        slug_field='name',
+        queryset=Category.objects.all()
+    )
 
     def validate(self, attrs):
-        #year = self.context['request'].year
         year = attrs['year']
         if year > dt.datetime.now().year:
             raise serializers.ValidationError(
@@ -50,6 +50,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
+
     class Meta:
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date')
@@ -59,11 +60,20 @@ class ReviewSerializer(serializers.ModelSerializer):
                       fields=('title', 'author',),
                       message='Нельзя оставить отзыв дважды!'
                       ),)
-        
+
     def validate(self, value):
         if not 0 > value > 11:
             raise serializers.ValidationError(
                 'Оцените от 0 до 10!')
         return value
-    
-    
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('review', 'pub_date')

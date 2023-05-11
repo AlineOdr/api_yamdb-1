@@ -1,44 +1,61 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 
 User = get_user_model()
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=256)
+    slug = models.SlugField(max_length=50,
+                            unique=True,
+                            validators=[
+                                RegexValidator(
+                                    regex='^[-a-zA-Z0-9_]+$',
+                                    message='use slug format',
+                                )
+                            ]
+                            )
 
     def __str__(self):
         return self.name
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=256)
+    slug = models.SlugField(max_length=50,
+                            unique=True,
+                            validators=[
+                                RegexValidator(
+                                    regex='^[-a-zA-Z0-9_]+$',
+                                    message='use slug format',
+                                )
+                            ]
+                            )
 
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=256)
     year = models.IntegerField()
-    rating = models.ForeignKey(
-        'Review',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='titles',
-        verbose_name=('Рейтинг'),
-    )
-    description = models.TextField()
+    rating = models.IntegerField()
+    # rating = models.ForeignKey(
+    #     'Review',
+    #     blank=True,
+    #     null=True,
+    #     on_delete=models.SET_NULL,
+    #     related_name='rating',
+    #     verbose_name=('Рейтинг'),
+    # )
+    description = models.TextField(blank=True, null=True)
     genre = models.ManyToManyField(
         Genre, through='TitleGenre'
     )
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
-        related_name='titles', blank=True, null=True
+        related_name='titles', null=True
     )
 
     def __str__(self):
@@ -67,7 +84,7 @@ class Review(models.Model):
             MaxValueValidator(10),
             MinValueValidator(1)
         ]
-     )
+    )
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
@@ -76,7 +93,7 @@ class Review(models.Model):
         verbose_name = ('Отзыв')
         verbose_name_plural = ('Отзывы')
         constraints = [models.UniqueConstraint(name='unique_review',
-                       fields=['title', 'fauthor'],)]
+                       fields=['title', 'author'],)]
 
     def __str__(self):
         return self.text
