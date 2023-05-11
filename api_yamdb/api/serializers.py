@@ -18,21 +18,32 @@ class CommentSerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        #fields = '__all__'
+        exclude = ('id',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    #genre = GenreSerializer(read_only=False, many=True)
-    #category = CategorySerializer(required=True)
+    genre = serializers.SlugRelatedField(
+        many=True,
+        required=True,
+        read_only=False,
+        slug_field='name',
+        queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        required=True,
+        read_only=False,
+        slug_field='name',
+        queryset=Category.objects.all()
+    )
 
     def validate(self, attrs):
-        #year = self.context['request'].year
         year = attrs['year']
         if year > dt.datetime.now().year:
             raise serializers.ValidationError(
