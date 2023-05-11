@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 User = get_user_model()
 
@@ -53,10 +54,22 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
     )
-    score = models.IntegerField()
+    score = models.IntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ]
+     )
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
     )
+
+    class Meta:
+        verbose_name = ('Отзыв')
+        verbose_name_plural = ('Отзывы')
+        constraints = [models.UniqueConstraint(name='unique_review',
+                       fields=['title', 'fauthor'],)]
 
     def __str__(self):
         return self.text
