@@ -1,5 +1,5 @@
 from reviews.models import Genre, User, Title, Comment, Review, Category
-from rest_framework import serializers
+from rest_framework import serializers, validators
 from rest_framework.validators import UniqueTogetherValidator
 import datetime as dt
 
@@ -54,5 +54,16 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         read_only_fields = ('id', 'author', 'pub_date')
-
+        validators = (validators.UniqueTogetherValidator(
+                      queryset=Review.objects.all(),
+                      fields=('title', 'author',),
+                      message='Нельзя оставить отзыв дважды!'
+                      ),)
+        
+    def validate(self, value):
+        if not 0 > value > 11:
+            raise serializers.ValidationError(
+                'Оцените от 0 до 10!')
+        return value
+    
     
