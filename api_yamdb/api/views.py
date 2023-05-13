@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
-#from django_filters.rest_framework import DjangoFilterBackend
-from reviews.models import Genre, User, Title, Comment, Review, Category
+from reviews.models import Genre, Title, Category, User, Comment, Review
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.pagination import PageNumberPagination
