@@ -1,4 +1,4 @@
-from reviews.models import Genre, User, Title, Comment, Review, Category
+from reviews.models import Genre, Title, Category, User, Comment, Review
 from rest_framework import serializers, validators
 from rest_framework.validators import UniqueTogetherValidator
 import datetime as dt
@@ -7,7 +7,6 @@ import datetime as dt
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        #fields = '__all__'
         exclude = ('id',)
 
 
