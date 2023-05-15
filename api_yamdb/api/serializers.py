@@ -105,15 +105,22 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True,
         required=True,
         read_only=False,
-        slug_field='name',
+        slug_field='slug',
         queryset=Genre.objects.all(),
     )
     category = serializers.SlugRelatedField(
         required=True,
         read_only=False,
-        slug_field='name',
+        slug_field='slug',
         queryset=Category.objects.all(),
     )
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        rate = obj.reviews.aggregate(rating=Avg('score'))
+        if not rate['rating']:
+            return None
+        return int(rate['rating'])
 
     def validate(self, attrs):
         year = attrs['year']

@@ -33,13 +33,13 @@ class User(AbstractUser):
         ],
     )
     email = models.EmailField(max_length=254, unique=True, blank=False)
-    bio = models.TextField(blank=True, verbose_name='Биография')
     role = models.CharField(
         choices=ROLE_CHOICES,
         default=USER,
         verbose_name='Роль',
         max_length=max(map(len, [role for role, _ in ROLE_CHOICES])),
     )
+    bio = models.TextField(blank=True, verbose_name='Биография')
 
     @property
     def is_admin(self):
@@ -54,13 +54,7 @@ class Category(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(
         max_length=50,
-        unique=True,
-        validators=[
-            RegexValidator(
-                regex='^[-a-zA-Z0-9_]+$',
-                message='use slug format',
-            )
-        ],
+        unique=True
     )
 
     def __str__(self):
@@ -81,7 +75,7 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, related_name='titles', null=True
     )
-    genre = models.ManyToManyField(Genre, through='TitleGenre', null=True)
+    genre = models.ManyToManyField(Genre, through='TitleGenre')
     rating = models.IntegerField(default=0)
     #   rating = models.ForeignKey(
     #       'Review',
@@ -106,10 +100,10 @@ class TitleGenre(models.Model):
 
 
 class Review(models.Model):
-    text = models.TextField()
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
     )
+    text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
     )
@@ -137,10 +131,10 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    text = models.TextField()
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments'
     )
+    text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
