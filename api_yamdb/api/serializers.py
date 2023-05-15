@@ -1,5 +1,5 @@
 import datetime as dt
-from sqlite3 import IntegrityError
+from django.db import IntegrityError
 
 from rest_framework.exceptions import ValidationError
 from reviews.models import Genre, User, Title, Comment, Review, Category
@@ -40,6 +40,14 @@ class TokenSerializer(serializers.Serializer):
     """ Серализатор для получения токена """
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для юзеров"""
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
 
 
 class CommentSerializer(serializers.ModelSerializer):

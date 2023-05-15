@@ -13,9 +13,10 @@ from .serializers import (
     CategorySerializer,
     ReviewSerializer,
     RegisterDataSerializer,
+    UserSerializer
 )
 
-
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAdminOrModeratorOrAuthorOrReadOnly
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.forms import ValidationError
@@ -69,6 +70,16 @@ def get_jwt_token(request):
     )
 
 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
+    lookup_field = 'username'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+
 class CreateRetrieveViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
@@ -110,3 +121,4 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
