@@ -1,7 +1,45 @@
+import datetime as dt
+from sqlite3 import IntegrityError
+
+from rest_framework.exceptions import ValidationError
 from reviews.models import Genre, User, Title, Comment, Review, Category
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-import datetime as dt
+
+from .validators import validate_bad_signs_in_username, validate_bad_value_in_username
+
+
+class RegisterDataSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации новых пользователей"""
+
+    username = serializers.CharField(
+        max_length=150,
+        validators=[
+            validate_bad_signs_in_username,
+            validate_bad_value_in_username,
+        ],
+    )
+    email = serializers.EmailField(
+        max_length=254,
+    )
+
+    class Meta:
+        fields = ('username', 'email')
+        model = User
+
+    def create(self, validated_data):
+        """Создание нового пользовательского объекта"""
+        try:
+            user = User.objects.get_or_create(**validated_data)[0]
+        except IntegrityError:
+            raise ValidationError('Такие User или Email уже есть')
+        return user
+
+
+class TokenSerializer(serializers.Serializer):
+    """ Серализатор для получения токена """
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
 
 
 class CommentSerializer(serializers.ModelSerializer):

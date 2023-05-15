@@ -7,6 +7,8 @@ from .views import (
     CategoryViewSet,
     GenreViewSet,
     ReviewViewSet,
+    get_jwt_token,
+    register,
 )
 
 router = DefaultRouter()
@@ -22,6 +24,6 @@ router.register(
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    #path('v1/', include('djoser.urls')),
-    #path('v1/', include('djoser.urls.jwt')),
+    path('v1/auth/token/', get_jwt_token, name='get_jwt_token'),
+    path('v1/auth/signup/', register, name='register')
 ]
