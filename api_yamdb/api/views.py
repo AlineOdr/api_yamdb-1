@@ -2,8 +2,13 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.pagination import (
+    LimitOffsetPagination,
+    PageNumberPagination,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
@@ -15,13 +20,8 @@ from .permissions import (
     IsAdminOrModeratorOrAuthorOrReadOnly,
     IsAdminOrReadOnly,
 )
-from reviews.models import Genre, Title, Category, User, Comment, Review
-from rest_framework import filters, mixins, viewsets
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-#from .permissions import OwnerOnly, OwnerOrReadOnly
+
+# from .permissions import OwnerOnly, OwnerOrReadOnly
 from .serializers import (
     CategorySerializer,
     CommentSerializer,

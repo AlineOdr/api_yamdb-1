@@ -1,11 +1,9 @@
 import datetime as dt
 
 from django.db import IntegrityError
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from requests import request
-from reviews.models import Genre, Title, Category, User, Comment, Review
 from rest_framework import serializers, validators
+from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
@@ -83,9 +81,12 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('review', 'pub_date')
 
+
 import datetime as dt
-from django.shortcuts import get_object_or_404
+
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,13 +106,13 @@ class TitleSerializer(serializers.ModelSerializer):
         required=True,
         read_only=False,
         slug_field='name',
-        queryset=Genre.objects.all()
+        queryset=Genre.objects.all(),
     )
     category = serializers.SlugRelatedField(
         required=True,
         read_only=False,
         slug_field='name',
-        queryset=Category.objects.all()
+        queryset=Category.objects.all(),
     )
 
     def validate(self, attrs):
@@ -141,20 +142,19 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, data):
         author = self.context.get('request').user
         title_id = self.context.get("view").kwargs.get("title_id")
-        title =  get_object_or_404(Title, pk=title_id)
+        title = get_object_or_404(Title, pk=title_id)
         if self.context.get('request').method == 'POST':
-            if  Review.objects.filter(author=author, title=title).exists():
+            if Review.objects.filter(author=author, title=title).exists():
                 raise serializers.ValidationError(
-                'Нельзя оставить отзыв дважды!')
+                    'Нельзя оставить отзыв дважды!'
+                )
         return data
-
-
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True)
+        slug_field='username', read_only=True
+    )
 
     class Meta:
         model = Comment
