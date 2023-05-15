@@ -1,5 +1,7 @@
-from django.core.management.base import BaseCommand
 import csv
+
+from django.core.management.base import BaseCommand
+
 from reviews.models import Category, Genre, Title, TitleGenre
 
 
@@ -7,9 +9,13 @@ class Command(BaseCommand):
     help = 'Transserfing from csv to database'
 
     def handle(self, *args, **options):
-
         csv_path = './static/data/'
-        csv_files = ['category.csv', 'genre.csv', 'titles.csv', 'genre_title.csv']
+        csv_files = [
+            'category.csv',
+            'genre.csv',
+            'titles.csv',
+            'genre_title.csv',
+        ]
         model_list = [Category, Genre, Title, TitleGenre]
 
         for csv_file, model in zip(csv_files, model_list):
