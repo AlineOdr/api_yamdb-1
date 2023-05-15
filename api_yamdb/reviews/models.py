@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 from rest_framework import status
+
 from api.validators import validate_bad_value_in_username
 
 
@@ -12,7 +13,7 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         (ADMIN, 'администратор'),
         (MODERATOR, 'модератор'),
-        (USER, 'пользователь')
+        (USER, 'пользователь'),
     )
 
     username = models.CharField(
@@ -23,25 +24,17 @@ class User(AbstractUser):
                 regex=r'^[\w.@+-]+\Z',
                 message='allows 150 characters or fewer @/./+/-/_ and digits',
                 code=status.HTTP_400_BAD_REQUEST,
-
             ),
             validate_bad_value_in_username,
-        ]
+        ],
     )
-    email = models.EmailField(
-        max_length=254,
-        unique=True,
-        blank=False
-    )
-    bio = models.TextField(
-        blank=True,
-        verbose_name='Биография'
-    )
+    email = models.EmailField(max_length=254, unique=True, blank=False)
+    bio = models.TextField(blank=True, verbose_name='Биография')
     role = models.CharField(
         choices=ROLE_CHOICES,
         default=USER,
         verbose_name='Роль',
-        max_length=max(map(len, [role for role, _ in ROLE_CHOICES]))
+        max_length=max(map(len, [role for role, _ in ROLE_CHOICES])),
     )
 
     @property
@@ -74,12 +67,13 @@ class Title(models.Model):
     year = models.IntegerField()
     rating = models.IntegerField()
     description = models.TextField()
-    genre = models.ManyToManyField(
-        Genre, through='TitleGenre'
-    )
+    genre = models.ManyToManyField(Genre, through='TitleGenre')
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL,
-        related_name='titles', blank=True, null=True
+        Category,
+        on_delete=models.SET_NULL,
+        related_name='titles',
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -103,9 +97,7 @@ class Review(models.Model):
         User, on_delete=models.CASCADE, related_name='reviews'
     )
     score = models.IntegerField()
-    pub_date = models.DateTimeField(
-        'Дата публикации', auto_now_add=True
-    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     def __str__(self):
         return self.text
@@ -119,9 +111,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
-    pub_date = models.DateTimeField(
-        'Дата публикации', auto_now_add=True
-    )
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     def __str__(self):
         return self.text

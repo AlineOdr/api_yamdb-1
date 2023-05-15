@@ -1,12 +1,16 @@
 import datetime as dt
-from django.db import IntegrityError
 
-from rest_framework.exceptions import ValidationError
-from reviews.models import Genre, User, Title, Comment, Review, Category
+from django.db import IntegrityError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from .validators import validate_bad_signs_in_username, validate_bad_value_in_username
+from reviews.models import Category, Comment, Genre, Review, Title, User
+
+from .validators import (
+    validate_bad_signs_in_username,
+    validate_bad_value_in_username,
+)
 
 
 class RegisterDataSerializer(serializers.ModelSerializer):
@@ -37,7 +41,8 @@ class RegisterDataSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
-    """ Серализатор для получения токена """
+    """Серализатор для получения токена"""
+
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
 
@@ -47,13 +52,28 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
+
+
+class MeSerializer(serializers.ModelSerializer):
+    """Сериализатор для своей учетной записи"""
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True)
+        slug_field='username', read_only=True
+    )
 
     class Meta:
         model = Comment
@@ -74,11 +94,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    #genre = GenreSerializer(read_only=False, many=True)
-    #category = CategorySerializer(required=True)
+    # genre = GenreSerializer(read_only=False, many=True)
+    # category = CategorySerializer(required=True)
 
     def validate(self, attrs):
-        #year = self.context['request'].year
+        # year = self.context['request'].year
         year = attrs['year']
         if year > dt.datetime.now().year:
             raise serializers.ValidationError(
