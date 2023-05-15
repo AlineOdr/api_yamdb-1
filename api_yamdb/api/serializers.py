@@ -1,8 +1,10 @@
+from requests import request
 from reviews.models import Genre, Title, Category, User, Comment, Review
 from rest_framework import serializers, validators
 from rest_framework.validators import UniqueTogetherValidator
 import datetime as dt
-
+from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,17 +56,18 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         read_only_fields = ('id', 'author', 'pub_date')
-        validators = (validators.UniqueTogetherValidator(
-                      queryset=Review.objects.all(),
-                      fields=('title', 'author',),
-                      message='Нельзя оставить отзыв дважды!'
-                      ),)
+        
+    def validate(self, data):
+        author = self.context.get('request').user
+        title_id = self.context.get("view").kwargs.get("title_id")
+        title =  get_object_or_404(Title, pk=title_id)
+        if self.context.get('request').method == 'POST':
+            if  Review.objects.filter(author=author, title=title).exists():
+                raise serializers.ValidationError(
+                'Нельзя оставить отзыв дважды!')
+        return data
 
-    def validate(self, value):
-        if not 0 > value > 11:
-            raise serializers.ValidationError(
-                'Оцените от 0 до 10!')
-        return value
+    
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -74,5 +77,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
         read_only_fields = ('review', 'pub_date')

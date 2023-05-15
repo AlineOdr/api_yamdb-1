@@ -40,14 +40,14 @@ class Title(models.Model):
         Genre, through='TitleGenre', null=True
     )
     rating = models.IntegerField(default=0)
-    # rating = models.ForeignKey(
-    #     'Review',
-    #     blank=True,
+ #   rating = models.ForeignKey(
+  #       'Review',
+   #      blank=True,
     #     null=True,
-    #     on_delete=models.SET_NULL,
-    #     related_name='rating',
-    #     verbose_name=('Рейтинг'),
-    # )
+     #    on_delete=models.SET_NULL,
+      #   related_name='rating',
+       #  verbose_name=('Рейтинг'),
+     #)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -73,8 +73,8 @@ class Review(models.Model):
     score = models.IntegerField(
         default=0,
         validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
+            MaxValueValidator(10, message='Оценка должна быть от 1 до 10!'),
+            MinValueValidator(1, message='Оценка должна быть от 1 до 10!')
         ]
     )
     pub_date = models.DateTimeField(
