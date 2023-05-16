@@ -1,14 +1,9 @@
-import datetime as dt
-
 from django.db import IntegrityError
-from requests import request
-from rest_framework import serializers, validators
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
-
-from .validators import (
+from reviews.validators import (
     validate_bad_signs_in_username,
     validate_bad_value_in_username,
 )
@@ -103,18 +98,14 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializerPost(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
-        required=True,
-        read_only=False,
         slug_field='slug',
         queryset=Genre.objects.all(),
     )
     category = serializers.SlugRelatedField(
-        required=True,
-        read_only=False,
         slug_field='slug',
         queryset=Category.objects.all(),
     )
-    #rating = serializers.SerializerMethodField()
+    # rating = serializers.SerializerMethodField()
 
     # def get_rating(self, obj):
     #     rate = obj.reviews.aggregate(rating=Avg('score'))
@@ -123,7 +114,7 @@ class TitleSerializerPost(serializers.ModelSerializer):
     #     return int(rate['rating'])
 
     def validate(self, attrs):
-        year = attrs['year']
+        year = attrs.get('year', 0)
         if year > dt.datetime.now().year:
             raise serializers.ValidationError(
                 'Нельзя добавлять произведения, которые еще не вышли!'
@@ -141,12 +132,12 @@ class TitleSerializerGet(serializers.ModelSerializer):
         many=True,
         required=True,
         read_only=False,
-        #queryset=Genre.objects.all()
+        # queryset=Genre.objects.all()
     )
     category = CategorySerializer(
         required=True,
         read_only=False,
-        #queryset=Category.objects.all()
+        # queryset=Category.objects.all()
     )
     rating = serializers.SerializerMethodField()
 

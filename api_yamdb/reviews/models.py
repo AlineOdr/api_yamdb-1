@@ -7,7 +7,7 @@ from django.core.validators import (
 from django.db import models
 from rest_framework import status
 
-from api.validators import validate_bad_value_in_username
+from .validators import validate_bad_value_in_username
 
 
 class User(AbstractUser):
@@ -52,10 +52,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=256)
-    slug = models.SlugField(
-        max_length=50,
-        unique=True
-    )
+    slug = models.SlugField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name

@@ -15,6 +15,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
+from .filters import TitleFilter
 from .permissions import (
     IsAdmin,
     IsAdminOrModeratorOrAuthorOrReadOnly,
@@ -29,8 +30,8 @@ from .serializers import (
     MeSerializer,
     RegisterDataSerializer,
     ReviewSerializer,
-    TitleSerializerPost,
     TitleSerializerGet,
+    TitleSerializerPost,
     TokenSerializer,
     UserSerializer,
 )
@@ -103,29 +104,24 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CreateRetrieveViewSet(
     mixins.CreateModelMixin,
-    #mixins.RetrieveModelMixin,
-    #mixins.UpdateModelMixin,
+    # mixins.RetrieveModelMixin,
+    # mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     pass
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    # serializer_classes = {
-    #     'post': TitleSerializerPost
-    # }
-    # default_serializer_class = TitleSerializerGet # Your default serializer
     queryset = Title.objects.all()
-    #serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'category__slug', 'genre__slug', 'year')
+    filterset_class = TitleFilter
     permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'update':
+        if self.request.method in ('POST', 'PATCH'):
             return TitleSerializerPost
         return TitleSerializerGet
 
