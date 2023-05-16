@@ -102,8 +102,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CreateRetrieveViewSet(
     mixins.CreateModelMixin,
+    #mixins.RetrieveModelMixin,
+    #mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     mixins.ListModelMixin,
-    viewsets.GenericViewSet,
+    viewsets.GenericViewSet
 ):
     pass
 
@@ -120,22 +123,24 @@ class TitleViewSet(viewsets.ModelViewSet):
         serializer.save(rating=0)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CreateRetrieveViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
+    lookup_field = "slug"
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CreateRetrieveViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = (IsAdminOrReadOnly,)
+    lookup_field = "slug"
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
