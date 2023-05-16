@@ -29,7 +29,8 @@ from .serializers import (
     MeSerializer,
     RegisterDataSerializer,
     ReviewSerializer,
-    TitleSerializer,
+    TitleSerializerPost,
+    TitleSerializerGet,
     TokenSerializer,
     UserSerializer,
 )
@@ -112,12 +113,21 @@ class CreateRetrieveViewSet(
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    # serializer_classes = {
+    #     'post': TitleSerializerPost
+    # }
+    # default_serializer_class = TitleSerializerGet # Your default serializer
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    #serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'category__slug', 'genre__slug', 'year')
     permission_classes = (IsAdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == 'create' or self.action == 'update':
+            return TitleSerializerPost
+        return TitleSerializerGet
 
     def perform_create(self, serializer):
         serializer.save(rating=0)

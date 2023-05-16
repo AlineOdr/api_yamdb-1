@@ -100,7 +100,7 @@ class CategorySerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleSerializerPost(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
         required=True,
@@ -108,12 +108,45 @@ class TitleSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Genre.objects.all(),
     )
-    #category = serializers.StringRelatedField()
     category = serializers.SlugRelatedField(
         required=True,
         read_only=False,
         slug_field='slug',
         queryset=Category.objects.all(),
+    )
+    #rating = serializers.SerializerMethodField()
+
+    # def get_rating(self, obj):
+    #     rate = obj.reviews.aggregate(rating=Avg('score'))
+    #     if not rate['rating']:
+    #         return None
+    #     return int(rate['rating'])
+
+    def validate(self, attrs):
+        year = attrs['year']
+        if year > dt.datetime.now().year:
+            raise serializers.ValidationError(
+                'Нельзя добавлять произведения, которые еще не вышли!'
+            )
+        return attrs
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+        read_only_fields = ('rating',)
+
+
+class TitleSerializerGet(serializers.ModelSerializer):
+    genre = GenreSerializer(
+        many=True,
+        required=True,
+        read_only=False,
+        #queryset=Genre.objects.all()
+    )
+    category = CategorySerializer(
+        required=True,
+        read_only=False,
+        #queryset=Category.objects.all()
     )
     rating = serializers.SerializerMethodField()
 
@@ -123,13 +156,13 @@ class TitleSerializer(serializers.ModelSerializer):
             return None
         return int(rate['rating'])
 
-    def validate(self, attrs):
-        year = attrs['year']
-        if year > dt.datetime.now().year:
-            raise serializers.ValidationError(
-                'Нельзя добавлять произведения, которые еще не вышли!'
-            )
-        return attrs
+    # def validate(self, attrs):
+    #     year = attrs['year']
+    #     if year > dt.datetime.now().year:
+    #         raise serializers.ValidationError(
+    #             'Нельзя добавлять произведения, которые еще не вышли!'
+    #         )
+    #     return attrs
 
     class Meta:
         model = Title
