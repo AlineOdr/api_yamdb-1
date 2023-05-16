@@ -103,14 +103,10 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializerPost(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
-        required=True,
-        read_only=False,
         slug_field='slug',
         queryset=Genre.objects.all(),
     )
     category = serializers.SlugRelatedField(
-        required=True,
-        read_only=False,
         slug_field='slug',
         queryset=Category.objects.all(),
     )
@@ -123,7 +119,7 @@ class TitleSerializerPost(serializers.ModelSerializer):
     #     return int(rate['rating'])
 
     def validate(self, attrs):
-        year = attrs['year']
+        year = attrs.get('year', 0)
         if year > dt.datetime.now().year:
             raise serializers.ValidationError(
                 'Нельзя добавлять произведения, которые еще не вышли!'

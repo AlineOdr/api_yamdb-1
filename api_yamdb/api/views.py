@@ -34,6 +34,7 @@ from .serializers import (
     TokenSerializer,
     UserSerializer,
 )
+from .filters import TitleFilter
 
 
 @api_view(['POST'])
@@ -113,19 +114,14 @@ class CreateRetrieveViewSet(
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    # serializer_classes = {
-    #     'post': TitleSerializerPost
-    # }
-    # default_serializer_class = TitleSerializerGet # Your default serializer
     queryset = Title.objects.all()
-    #serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'category__slug', 'genre__slug', 'year')
+    filterset_class = TitleFilter
     permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'update':
+        if self.request.method in ('POST', 'PATCH'):
             return TitleSerializerPost
         return TitleSerializerGet
 
