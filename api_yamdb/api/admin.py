@@ -5,12 +5,12 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
-       'pk',
-       'name',
-       'year',
-       'description',
-       # 'genre',
-       'category',
+        'pk',
+        'name',
+        'year',
+        'description',
+        # 'genre',
+        'category',
     )
     search_fields = ('name',)
 

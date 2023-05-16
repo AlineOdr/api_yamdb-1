@@ -15,6 +15,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
+from .filters import TitleFilter
 from .permissions import (
     IsAdmin,
     IsAdminOrModeratorOrAuthorOrReadOnly,
@@ -29,12 +30,11 @@ from .serializers import (
     MeSerializer,
     RegisterDataSerializer,
     ReviewSerializer,
-    TitleSerializerPost,
     TitleSerializerGet,
+    TitleSerializerPost,
     TokenSerializer,
     UserSerializer,
 )
-from .filters import TitleFilter
 
 
 @api_view(['POST'])
@@ -104,11 +104,11 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CreateRetrieveViewSet(
     mixins.CreateModelMixin,
-    #mixins.RetrieveModelMixin,
-    #mixins.UpdateModelMixin,
+    # mixins.RetrieveModelMixin,
+    # mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     pass
 

@@ -2,7 +2,15 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from reviews.models import Category, Genre, Title, TitleGenre, Review, Comment, User
+from reviews.models import (
+    Category,
+    Comment,
+    Genre,
+    Review,
+    Title,
+    TitleGenre,
+    User,
+)
 
 
 class Command(BaseCommand):
@@ -19,7 +27,15 @@ class Command(BaseCommand):
             'review.csv',
             'comments.csv',
         ]
-        model_list = [Category, Genre, Title, TitleGenre, User, Review, Comment]
+        model_list = [
+            Category,
+            Genre,
+            Title,
+            TitleGenre,
+            User,
+            Review,
+            Comment,
+        ]
 
         for csv_file, model in zip(csv_files, model_list):
             print(csv_file)
@@ -42,5 +58,13 @@ class Command(BaseCommand):
 
                     for row in reader:
                         print(row)
-                        obg = model(id=row['id'], username=row['username'], email=row['email'], role=row['role'], bio=row['bio'], first_name=row['first_name'], last_name=['last_name'])
+                        obg = model(
+                            id=row['id'],
+                            username=row['username'],
+                            email=row['email'],
+                            role=row['role'],
+                            bio=row['bio'],
+                            first_name=row['first_name'],
+                            last_name=['last_name'],
+                        )
                         obg.save()
