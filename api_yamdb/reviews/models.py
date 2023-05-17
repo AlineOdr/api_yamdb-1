@@ -74,14 +74,6 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(Genre, through='TitleGenre')
     rating = models.IntegerField(default=0)
-    #   rating = models.ForeignKey(
-    #       'Review',
-    #      blank=True,
-    #     null=True,
-    #    on_delete=models.SET_NULL,
-    #   related_name='rating',
-    #  verbose_name=('Рейтинг'),
-    # )
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

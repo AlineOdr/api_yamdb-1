@@ -1,8 +1,8 @@
 import datetime as dt
 
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django.db import IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -104,13 +104,12 @@ class TitleSerializerPost(serializers.ModelSerializer):
         queryset=Category.objects.all(),
     )
 
-    def validate(self, attrs):
-        year = attrs.get('year', 0)
-        if year > dt.datetime.now().year:
+    def validate_year(self, value):
+        if value > dt.datetime.now().year:
             raise serializers.ValidationError(
                 'Нельзя добавлять произведения, которые еще не вышли!'
             )
-        return attrs
+        return value
 
     class Meta:
         model = Title
