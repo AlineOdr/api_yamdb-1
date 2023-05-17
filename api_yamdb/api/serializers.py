@@ -1,3 +1,7 @@
+import datetime as dt
+
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -77,12 +81,6 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('review', 'pub_date')
 
 
-import datetime as dt
-
-from django.db.models import Avg
-from django.shortcuts import get_object_or_404
-
-
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -105,13 +103,6 @@ class TitleSerializerPost(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Category.objects.all(),
     )
-    # rating = serializers.SerializerMethodField()
-
-    # def get_rating(self, obj):
-    #     rate = obj.reviews.aggregate(rating=Avg('score'))
-    #     if not rate['rating']:
-    #         return None
-    #     return int(rate['rating'])
 
     def validate(self, attrs):
         year = attrs.get('year', 0)
@@ -132,12 +123,10 @@ class TitleSerializerGet(serializers.ModelSerializer):
         many=True,
         required=True,
         read_only=False,
-        # queryset=Genre.objects.all()
     )
     category = CategorySerializer(
         required=True,
         read_only=False,
-        # queryset=Category.objects.all()
     )
     rating = serializers.SerializerMethodField()
 
@@ -146,14 +135,6 @@ class TitleSerializerGet(serializers.ModelSerializer):
         if not rate['rating']:
             return None
         return int(rate['rating'])
-
-    # def validate(self, attrs):
-    #     year = attrs['year']
-    #     if year > dt.datetime.now().year:
-    #         raise serializers.ValidationError(
-    #             'Нельзя добавлять произведения, которые еще не вышли!'
-    #         )
-    #     return attrs
 
     class Meta:
         model = Title
