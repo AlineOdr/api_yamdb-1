@@ -9,7 +9,7 @@ class TitleAdmin(admin.ModelAdmin):
         'name',
         'year',
         'description',
-        # 'genre',
+        'genre',
         'category',
     )
     search_fields = ('name',)
@@ -35,8 +35,6 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ('pub_date',)
 
 
-# admin.site.register(Genre, GenreAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Comment, CommentAdmin)
-# admin.site.register(Category, CategoryAdmin)
 admin.site.register(Review, ReviewAdmin)
