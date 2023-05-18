@@ -74,7 +74,7 @@ def get_jwt_token(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = (IsAdmin,)
     lookup_field = 'username'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
@@ -82,7 +82,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
         methods=['get', 'patch'],
     )
     def me(self, request):
@@ -99,8 +99,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CreateRetrieveViewSet(
     mixins.CreateModelMixin,
-    # mixins.RetrieveModelMixin,
-    # mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
