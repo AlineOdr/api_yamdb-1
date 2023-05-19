@@ -1,6 +1,9 @@
 Проект YaMDb собирает отзывы пользователей на произведения. Произведения делятся на категории, такие как «Книги», «Фильмы», «Музыка».  Сами произведения в YaMDb не хранятся, здесь нельзя посмотреть фильм или послушать музыку.
-# api_yamdb
+# Краткое описание финального проекта по API (api_yamdb)
 Это API-сервис для YaMDb, который позволяет интегрировать сервисы YaMDb для других платформ.
+# Используемые технологии и библиотеки:
+В данном проекте использовались DRF, Postman, SQLite, SimpleJWT, Python_dotenv, pytest, django.yml, Django ORM, CSV, github/projects, Notion
+# Установка и настройки:
 ### Как запустить проект:
 
 Клонировать репозиторий:
@@ -45,7 +48,17 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
-### Примеры использования:
+# Заполнение базы данных из CSV:
+Скрипт загрузки данных в бд находится в reviews > management > commands
+Сами csv файлы в static > data > csv_import_script.py
+Запуск скрипта на запуск импорта всех csv:
+```
+python manage.py csv_import_script
+```
+# Документация:
+Перейти по ссылке:
+http://127.0.0.1:8000/redoc/
+# Примеры запросов к API:
 1) Регистрация нового пользователя:
 * Отправить POST-запрос http://127.0.0.1:8000/api/v1/auth/signup/. В теле запроса указать: 
 ```
@@ -341,3 +354,7 @@ python manage.py runserver
 18) Удалить комментарий к отзыву по id (Права доступа: Автор комментария, модератор или администратор.):
 * Отправить DELETE-запрос http://127.0.0.1:8000/api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}//
 
+# Разработчики:
+* [![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FFFSanchez) Александр Трифонов
+* [![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AlineOdr) Алина Одринская
+* [![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/inovaras) Альбина Гильмутдинова
